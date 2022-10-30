@@ -1,0 +1,193 @@
+layer:
+  adaption:
+    internal:
+      selected_column_list: 
+        - OUTLET_ID
+        - LONGITUDE
+        - LATITUDE
+        - OUTLET_NAME_1
+        - OUTLET_NAME_2
+        - CITY
+        - ADDRESS
+        - POSTAL_CODE
+      filepaths:
+        customer: "abfss://cchbc@cchbcaadls2prod.dfs.core.windows.net/sources/ca/cch_bw/md/raw/CA_0CUS03_Customer/{CAPS_CC}_0CUS03/"
+        customer_pi: "wasbs://cchbc-pi@cchbcaadls2prod.blob.core.windows.net/sources/ca/cch_bw/md/raw/CACUS03PI_Customer_PI/{CAPS_CC}_CUS03PI/"
+        sales_org: "abfss://cchbc@cchbcaadls2prod.dfs.core.windows.net/sources/ca/cch_bw/md/raw/CA_SALORG_SalesOrg/CA_SALORG/CA_SALORG.csv"
+      gloabal_acount_group:
+      global_cust_hier2_cust:
+        - KA
+        - NK
+      global_order_block_list:
+        - 'CW'
+        - 'F'
+        - 'I'
+        - '#'
+        - 'C'
+        - 'TS'
+        - 'PR'
+        - 'NR'
+        - 'VF'
+        - 'NAN' 
+      global_exclude_channel_list: 
+        - '036'
+        - '099'
+        - 'ZZZ'
+      global_exclude_subchannel_list:
+        - '610'
+        - '815'
+        - '816'
+    external:
+      selected_column_list:
+        - 'poi_id'
+        - 'name'
+        - 'location_country'
+        - 'CITY'
+        - 'location_county'
+        - 'location_state'
+        - 'location_text'
+        - 'POSTAL_CODE'
+        - 'location_lon'
+        - 'location_lat'
+      selected_column_aliases:
+        - 'OUTLET_ID'
+        - 'OUTLET_NAME'
+        - 'COUNTRY'
+        - 'CITY'
+        - 'COUNTY'
+        - 'STATE'
+        - 'ADDRESS'
+        - 'POSTAL_CODE'
+        - 'LONGITUDE'
+        - 'LATITUDE'
+      poi_filepath:
+        ro: '/dbfs/mnt/datalake_gen2/cchbc/sources/ca/carto/raw/ro/sentiment/dataappeal_pointsofinterest_placessentiment_rou_latlon_v1_quart.csv'
+        gr: '/dbfs/mnt/datalake_gen2/cchbc/sources/ca/carto/raw/gr/sentiment/dataappeal_pointsofinterest_placessentiment_grc_latlon_v1_quart.csv'
+        cz: '/dbfs/mnt/datalake_gen2/cchbc/sources/ca/carto/raw/cz/sentiment/dataappeal_pointsofinterest_placessentiment_cze_latlon_v1_quart.csv'
+        pl: '/dbfs/mnt/datalake_gen2/cchbc/sources/ca/carto/raw/pl/sentiment/dataappeal_pointsofinterest_placessentiment_pol_latlon_v1_quart.csv'
+        at: '/dbfs/mnt/datalake_gen2/cchbc/sources/ca/carto/raw/at/sentiment/dataappeal_pointsofinterest_placessentiment_aut_latlon_v1_quart_v2.csv'
+  application:
+    output_column_list:
+      - 'OUTLET_ID_EXTERNAL'
+      - 'CUSTOMER'
+      - 'PRICE_RANGE_INDICATOR'
+      - 'NAME_1'
+      - 'NAME_2'
+      - "NAME_EXTERNAL_ALL"
+      - 'ADDRESS_EXTERNAL_ALL'                        
+      - 'ADDRESS'
+      - 'DISTANCE_METERS'
+      - 'REVIEWS_COUNT'
+      - 'STARS'
+      - 'OUTLET_NAME_SIMILARITY'
+      - 'ADDRESS_TEXT_SIMILARITY'
+      - 'ADDRESS_NUM_SIMILARITY'
+      - 'POSTAL_CODE_SIMILARITY'
+      - 'CITY_TEXT_SIMILARITY'
+      - 'POSTAL_CODE_SIMILARITY'
+      - "SENTIMENT"  
+      - "MATCH_RULE"
+    output_column_aliases:
+      - 'OUTLET_ID_EXTERNAL'
+      - 'OUTLET_ID_EXTERNAL'
+      - 'PRICE_RANGE_INDICATOR'
+      - 'NAME_1'
+      - 'NAME_2'
+      - "NAME_EXTERNAL"
+      - "ADDRESS_EXTERNAL"                        
+      - 'ADDRESS'
+      - 'DISTANCE_METERS'
+      - 'REVIEWS_COUNT'
+      - 'STARS'
+      - 'OUTLET_NAME_SIMILARITY'
+      - 'ADDRESS_TEXT_SIMILARITY'
+      - 'ADDRESS_TEXT_SIMILARITY'
+      - 'POSTAL_CODE_SIMILARITY'
+      - 'CITY_TEXT_SIMILARITY'
+      - 'CITY_TEXT_SIMILARITY'
+      - 'SENTIMENT'
+      - 'MATCH_RULE'
+    extenal_column_list:
+      - 'poi_id'
+      - 'price_range_indicator'
+      - "location_text"
+      - "name"
+      - "reviews_count"
+      - "stars" 
+      - "sentiment"
+    external_column_aliases:
+      - 'OUTLET_ID_EXTERNAL'
+      - 'price_range_indicator'
+      - "UNMATCHED_EXTERNAL_ADDRESS"
+      - "UNMATCHED_EXTERNAL_NAME"
+      - "REVIEWS_COUNT"
+      - "STARS"
+      - "SENTIMENT"
+    join_column_list:
+      - 'OUTLET_ID_EXTERNAL'
+      - 'OUTLET_ID_INTERNAL'
+      - 'price_range_indicator'
+      - 'OUTLET_NAME_1_INTERNAL'
+      - 'OUTLET_NAME_2_INTERNAL'
+      - "OUTLET_NAME_SIMILARITY"
+      - 'OUTLET_NAME_EXTERNAL'
+      - "ADDRESS_TEXT_SIMILARITY"
+      - "ADDRESS_NUM_SIMILARITY"
+      - "POSTAL_CODE_SIMILARITY"
+      - "CITY_TEXT_SIMILARITY"
+      - "POSTAL_CODE_SIMILARITY"
+      - "UNMATCHED_EXTERNAL_NAME"
+      - 'ADDRESS_INTERNAL'
+      - 'ADDRESS_EXTERNAL'
+      - "UNMATCHED_EXTERNAL_ADDRESS"
+      - 'DISTANCE_METERS'
+      - "REVIEWS_COUNT"
+      - "STARS"
+      - "SENTIMENT"
+      - "MATCH_RULE"
+    join_column_aliases:
+      - 'OUTLET_ID_EXTERNAL'
+      - 'CUSTOMER' 
+      - 'PRICE_RANGE_INDICATOR' 
+      - 'NAME_1' 
+      - 'NAME_2' 
+      - "OUTLET_NAME_SIMILARITY" 
+      - 'OUTLET_NAME_EXTERNAL' 
+      - 'ADDRESS_TEXT_SIMILARITY' 
+      - 'ADDRESS_NUM_SIMILARITY' 
+      - 'POSTAL_CODE_SIMILARITY' 
+      - 'CITY_TEXT_SIMILARITY' 
+      - 'POSTAL_CODE_SIMILARITY' 
+      - 'UNMATCHED_EXTERNAL_NAME' 
+      - 'ADDRESS' 
+      - 'ADDRESS_EXTERNAL' 
+      - "UNMATCHED_EXTERNAL_ADDRESS" 
+      - 'DISTANCE_METERS' 
+      - 'REVIEWS_COUNT' 
+      - 'STARS'
+      - 'SENTIMENT'
+      - 'MATCH_RULE'
+    drop_column_list:
+      - "ADDRESS_EXTERNAL"
+      - "UNMATCHED_EXTERNAL_ADDRESS"
+      - "UNMATCHED_EXTERNAL_NAME"
+      - "OUTLET_NAME_EXTERNAL"
+# Logging configuration
+logging:
+  version: 1
+  formatters:
+    xetra:
+      format: "Xetra Transformer - %(asctime)s - %(levelname)s - %(message)s"
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: xetra
+      level: DEBUG
+  root:
+    level: DEBUG
+    handlers: [console]
+  
+
+
+
+

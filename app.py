@@ -14,9 +14,6 @@ def main():
     entry point to run the xtra ETL job
     """
     
-    spark.conf.set(
-  "fs.azure.account.key.cchbcaadls2prod.blob.core.windows.net",
-  "J0OGUd0Ac+N8TJbptBLmnQ0okp4yqIpaynmHjBkIYnsJYIiC9mUBL6GrH+QQNSWewS3/7i7CSHckZaWvH3HIog==")
     
     # Parsing Config YAML file
     #parser = argparse.ArgumentParser(description='Run the Outlet Matching job.')

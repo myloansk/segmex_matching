@@ -48,10 +48,9 @@ class PoiData(Source):
         mapOfColumnAliases = self._externalSrcConfig.__create_map_of_selected_column_aliases__()
         return (self._sparkD.select([f.col(colName).alias(aliasName) for colName, aliasName in mapOfColumnAliases.items()]))
 
-    def getData(self)->DataFrame:
-        self.readData()
-        self.prepareAuxiliaryData()
-        self.prepareData()
+
+
+class 
 
 
 

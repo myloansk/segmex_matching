@@ -39,12 +39,6 @@ class PoiData(Source):
         return self._sparkDf
 
     def prepareData(self)->DataFrame:
-        # Filter for at least one review in the last 6 months
-        exprSumCounts = lambda months : pysum( f.coalesce(f.col(f'reviews_count_m{i}').cast('integer'), f.lit(0)) for i in range(1, months+1))
-        poiListingDf = poiListingDf.filter(exprSumCounts(6)>0)
-
-        self.set_auxiliary_data(poiListingDf)
-        # Filter for valid coordinates
         
         poiListingDf = poiListingDf.filter(self._externalSrcConfig.__create_filtering_conditions__())                                                                            
         poiListingDf = poiListingDf.withColumn('POSTAL_CODE',f.lit(None).cast(t.StringType()))

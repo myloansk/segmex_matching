@@ -40,13 +40,13 @@ class PoiData(Source):
 
     def prepareData(self)->DataFrame:
         
-        poiListingDf = poiListingDf.filter(self._externalSrcConfig.__create_filtering_conditions__())                                                                            
-        poiListingDf = poiListingDf.withColumn('POSTAL_CODE',f.lit(None).cast(t.StringType()))
-        poiListingDf = poiListingDf.withColumn('CITY',f.coalesce(f.col('location_city'), f.col('location_state')))
+        self._sparkD = self._sparkD..filter(self._externalSrcConfig.__create_filtering_conditions__())                                                                            
+        self._sparkD = self._sparkD.withColumn('POSTAL_CODE',f.lit(None).cast(t.StringType()))
+        self._sparkD = self._sparkD.withColumn('CITY',f.coalesce(f.col('location_city'), f.col('location_state')))
 
         # Finalize table
         mapOfColumnAliases = self._externalSrcConfig.__create_map_of_selected_column_aliases__()
-        return (poiListingDf.select([f.col(colName).alias(aliasName) for colName, aliasName in mapOfColumnAliases.items()]))
+        return (self._sparkD.select([f.col(colName).alias(aliasName) for colName, aliasName in mapOfColumnAliases.items()]))
 
     def getData(self)->DataFrame:
         self.readData()

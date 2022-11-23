@@ -55,11 +55,47 @@ class CCHBCData(Source):
     _sourceConfig: _internalSrcConfig
     _sparkDf: DataFrame = None
 
-    def prepareData(self) -> DataFrame:
-        return super().prepareData()
+    listOfInputs:Optional[DataFrame]
     
+
+    def readData(self)->None:
+        # Load customer MD
+        customerDf = spark.read.option("header", "true").option("sep", "|").csv(self._internalSrcConfig.filepaths['customer'].format( CAPS_CC = self._cc.upper()))
+        customerDf = customerDf.fillna("NAN", subset=['_BIC_CSUP_CUST'])
+        
+        # Apply standard filters
+        customerDf = customerDf.filter(self._internalSrcConfig.__create_filtering_condition__())
+        # Load customer MD PI
+        customerPiDf = spark.read.option("header", "true").option("sep", "|").csv(self._internalSrcConfig.filepaths['customer_pi'].format( CAPS_CC = self._cc.upper()))
+
+        # Load country name
+        salesOrgDf = spark.read.option("header", "true").csv(self._internalSrcConfig.filepaths['sales_org'])
+        salesOrgDf = salesOrgDf.select('SALESORG', 'COUNTRYTXT').distinct()
+
+        self.listOfInputs = [customerDf, customerPiDf, salesOrgDf]
+
+
+
     def prepareData(self) -> DataFrame:
-        return super().prepareData()
+        
+        customerDf, customerPiDf, salesOrgDf = self.listOfInputs
+        
+        self._internalDf = (customerDf.join(customerPiDf, on='CUSTOMER', how='left')
+                                .join(salesOrgDf, on='SALESORG', how='left')
+                                .select(customerDf['CUSTOMER'].alias('OUTLET_ID'),
+                                        f.coalesce(customerPiDf['NAME'], customerPiDf['CUSTOMER_DESC']).alias('OUTLET_NAME_1'),
+                                        f.coalesce(customerPiDf['NAME2'], customerPiDf['CUSTOMER_DESC']).alias('OUTLET_NAME_2'),
+                                        salesOrgDf['COUNTRYTXT'].alias('COUNTRY'),
+                                        customerPiDf['CITY'].alias('CITY'),
+                                        customerPiDf['STREET'].alias('ADDRESS'),
+                                        customerPiDf['POSTAL_CD'].alias('POSTAL_CODE'),
+                                        customerDf['LONGITUDE'].cast('double').alias('LONGITUDE'),
+                                        customerDf['LATITUDE'].cast('double').alias('LATITUDE'),
+                                    )
+        )
+
+        self._sparkDf = self._sparkDf.select(*[f.col(Col).alias(Col+'_INTERNAL') for Col in self._internalSrcConfig.selected_column_list])
+        return self._sparkDf 
 
 
 

@@ -50,7 +50,17 @@ class PoiData(Source):
 
 
 
-class 
+class CCHBCData(Source):
+    
+    _sourceConfig: _internalSrcConfig
+    _sparkDf: DataFrame = None
+
+    def prepareData(self) -> DataFrame:
+        return super().prepareData()
+    
+    def prepareData(self) -> DataFrame:
+        return super().prepareData()
+
 
 
 

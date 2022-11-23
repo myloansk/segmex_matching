@@ -10,6 +10,7 @@ import pandas as pd
 class Source(ABC):
 
     _sourceConfig:NamedTuple
+    _sparkDf:DataFrame = None
 
     @abstractmethod
     def readData(self)->DataFrame:pass
@@ -20,13 +21,15 @@ class Source(ABC):
 class PoiData(Source):
 
     _sourceConfig:_externalSrcConfig
+    _sparkDf:DataFrame
 
     def readData(self)->DataFrame:
         df_from_each_file = (pd.read_csv(f, low_memory=False) for f in [self._externalSrcConfig.poi_filepath[self._cc]])
         poiListingPd   = pd.concat(df_from_each_file, ignore_index=True)
 
         # Convert to spark dataframe
-        return spark.createDataFrame(poiListingPd)
+        self._sparkDf = spark.createDataFrame(poiListingPd)
+        return 
     
     def prepareAuxiliaryData(self)->DataFrame:
         # Filter for at least one review in the last 6 months
@@ -51,5 +54,10 @@ class PoiData(Source):
         mapOfColumnAliases = self._externalSrcConfig.__create_map_of_selected_column_aliases__()
         return (poiListingDf.select([f.col(colName).alias(aliasName) for colName, aliasName in mapOfColumnAliases.items()]))
 
-    
+    def getData(self)->DataFrame:
+        self.readData()
+        self.prepareAuxiliaryData()
+        self.prepareData()
+
+
 

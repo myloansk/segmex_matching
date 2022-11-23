@@ -33,14 +33,14 @@ class InternalSrcConfig(NamedTuple):
                                                     globalOrderBlockListPch = ','.join(["\"" + ele + "\"" if ele!='' else ele for ele in self.global_order_block_list]),
                                                     globalExlcudeChannelListPch = ','.join([ "\"" + ele + "\""  for ele in self.global_exclude_channel_list]),
                                                     globalExlcudeSubChannelListPch = ','.join(["\"" + ele + "\"" for ele in self.global_exclude_subchannel_list]))
-   
+
 class ExternalSrcConfig(NamedTuple):
   selected_column_list:List[str]
   selected_column_aliases:List[str]
   poi_filepath:str
   
   def __create_filtering_conditions__(self)->str:
-     return """{expr}""".format(expr = ' and '.join(["(CAST(location_lon AS DOUBLE)!=0)","(CAST(location_lat AS DOUBLE)!=0)","(location_lon IS NOT NULL)", "(location_lat IS NOT NULL)"]))
+    return """{expr}""".format(expr = ' and '.join(["(CAST(location_lon AS DOUBLE)!=0)","(CAST(location_lat AS DOUBLE)!=0)","(location_lon IS NOT NULL)", "(location_lat IS NOT NULL)"]))
     
   def __create_map_of_selected_column_aliases__(self)->Dict[str, str]:
     return dict(zip(self.selected_column_list, self.selected_column_aliases))
@@ -54,13 +54,7 @@ class ExtractData():
         self._internalSrcConfig = internalSrcConfig
         self._externalSrcConfig = externalSrcConfig
         self._cc = cc
-        #self._internalSelectedColumnLst = internalSelectedColumnLst
-        #self._internalFilePaths = internalFilePaths
-        #self._internalFilteringCond = internalFilteringCond
-        #self._selectedColumnMap = selectedColumnMap
-        #self._srcPathMap = srcPathMap
-        #self._externalFilteringCond = externalFilteringCond
-       
+      
 
         self._internalDf:DataFrame = None
         self._externalDf:DataFrame = None

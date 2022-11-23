@@ -29,14 +29,14 @@ class PoiData(Source):
 
         # Convert to spark dataframe
         self._sparkDf = spark.createDataFrame(poiListingPd)
-        return 
+        return self
     
     def prepareAuxiliaryData(self)->DataFrame:
         # Filter for at least one review in the last 6 months
         exprSumCounts = lambda months : pysum( f.coalesce(f.col(f'reviews_count_m{i}').cast('integer'), f.lit(0)) for i in range(1, months+1))
-        poiListingDf = poiListingDf.filter(exprSumCounts(6)>0)
+        self._sparkDf = self._sparkDf.filter(exprSumCounts(6)>0)
 
-        return poiListingDf
+        return self._sparkDf
 
     def prepareData(self)->DataFrame:
         # Filter for at least one review in the last 6 months

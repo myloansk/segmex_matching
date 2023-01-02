@@ -12,6 +12,9 @@ class Source(ABC):
     _sourceConfig:NamedTuple
     _sparkDf:DataFrame = None
 
+    def setConfig(self, sourceConfig:NamedTuple)->None:
+        self._sourceConfig = sourceConfig
+
     @abstractmethod
     def readData(self)->DataFrame:pass
 
@@ -20,7 +23,7 @@ class Source(ABC):
 
 class PoiData(Source):
 
-    _sourceConfig:_externalSrcConfig
+    _sourceConfig: ExternalSrcConfig
     _sparkDf:DataFrame
 
     def readData(self)->DataFrame:
@@ -48,16 +51,13 @@ class PoiData(Source):
         mapOfColumnAliases = self._externalSrcConfig.__create_map_of_selected_column_aliases__()
         return (self._sparkD.select([f.col(colName).alias(aliasName) for colName, aliasName in mapOfColumnAliases.items()]))
 
-
-
 class CCHBCData(Source):
     
-    _sourceConfig: _internalSrcConfig
+    _sourceConfig: InternalSrcConfig
     _sparkDf: DataFrame = None
 
     listOfInputs:Optional[DataFrame]
     
-
     def readData(self)->None:
         # Load customer MD
         customerDf = spark.read.option("header", "true").option("sep", "|").csv(self._internalSrcConfig.filepaths['customer'].format( CAPS_CC = self._cc.upper()))
@@ -73,8 +73,6 @@ class CCHBCData(Source):
         salesOrgDf = salesOrgDf.select('SALESORG', 'COUNTRYTXT').distinct()
 
         self.listOfInputs = [customerDf, customerPiDf, salesOrgDf]
-
-
 
     def prepareData(self) -> DataFrame:
         

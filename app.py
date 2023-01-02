@@ -1,17 +1,22 @@
 # Databricks notebook source
 # MAGIC %run ./commons/extract
 
-# COMMAND ----------
+# Import dependencies from other project's folders
+from common.extract import (InternalSrcConfig,
+                    ExternalSrcConfig, ExtractData)
+from common.transform import ( TransformerConfig, TransformerContext)
+from common.fuzzy_matcher import FuzzyMatcherContext
+from common.string_processor import StringContext
 
+# import python pkgs
 import argparse
 import logging
 import logging.config
-
 import yaml
 
 def main():
     """
-    entry point to run the xtra ETL job
+    entry point to run the Segment Matching ETL job
     """
     
     
@@ -46,12 +51,12 @@ def main():
     logger.info('Outlet Matching ETL job Init objects dependant to extract stage')
     #extractData = ExtractData(internalSelectedColumnLst,internalFilePaths,internalFilteringCond,selectedColumnMap,poiListingPaths,externalFilteringCond)
     extractData = ExtractData(internalSrcConfig, externalSrcConfig)
-  
+
     transformerConfig = TransformerConfig(['LONGITUDE','LATITUDE'],'OUTLET_ID')
     fuzzyMatcherContext = FuzzyMatcherContext()
     stringMatcherContext = StringContext()
     transformerContext = TransformerContext(stringMatcherContext, fuzzyMatcherContext, transformerConfig)
-  
+
     logger.info('Outlet Matching ETL job Init Object responsible for Outlet Matching Job')
     outletMatching = OutletMatching(extractData, transformerContext,trgConfig)
     logger.info('Outlet Matching ETL job Extract Stage')
